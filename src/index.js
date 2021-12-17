@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function renderQuote(data) {
     data.forEach(quoteData => {
-
+    let likes = quoteData.likes.filter(like => like.id = quoteData.id)
+    console.log(likes)
   const li = document.createElement('li')
     li.className = 'quote-card'
     li.innerHTML = `
@@ -23,25 +24,24 @@ function renderQuote(data) {
         <p class="mb-0">${quoteData.quote}</p>
         <footer class="blockquote-footer">${quoteData.author}</footer>
         <br>
-        <button class='btn-success'>Likes: <span> 0</span></button>
+        <button class='btn-success'>Likes: <span>${likes.length}</span></button>
         <button class='btn-danger'>Delete</button>
         </blockquote>
     `
     //console.log(quoteData)
 
+    quoteUl.appendChild(li)
+
     li.querySelector('.btn-danger').addEventListener('click', () =>{
         li.remove()
         deleteQuote(quoteData.id)
+
+
     })
-
-    quoteData.likes.forEach(key => {
-        //console.log(key.id)\
-    const span = li.querySelector('span')
-    span.innerText = key.id
-
-    li.querySelector('.btn-success').addEventListener('click', () =>{
+    li.querySelector('.btn-success').addEventListener('click', ()=>{
         console.log('click')
-        key.id++
+        let likes = parseInt(li.querySelector('span').innerText) 
+        li.querySelector('span').innerText = likes + 1
 
         fetch('http://localhost:3000/likes', {
             method: 'POST',
@@ -50,21 +50,17 @@ function renderQuote(data) {
             },
             body: JSON.stringify({
                 quoteId: parseInt(`${quoteData.id}`),
-                id: key.id
             })
         })
         .then(res=>res.json())
-        .then(key => console.log(key.id))
+        .then(like => console.log(like))
 
     }) 
 
 
     })
-     
 
-    quoteUl.appendChild(li)
 
-    }) 
     
     form.addEventListener('submit', (e) =>{
         e.preventDefault()
